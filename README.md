@@ -229,7 +229,3 @@ Acesse `http://IP_PUBLICO_DA_EC2` no navegador para verificar se o site está fu
 - **Cron**: `/var/log/cron_monitoramento.log`  
 
 ---
-
-**Licença**: MIT.  
-**Repositório**: [[Link para o repositório no GitHub](https://github.com/seu-usuario/projeto-aws](https://github.com/ThiagoResende88/Configurando-Servidor-Web-com-Monitoramento-AWS/).  
-```
