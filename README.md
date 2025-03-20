@@ -65,7 +65,7 @@ Já dentro da instância, execute:
 ```bash
 sudo apt update && sudo apt install nginx -y
 ```
-A partir daqui o Nginx já deve estar funcionando dentro da instância criar e pode ser acessado através do navegador com o IP público.
+A partir daqui o Nginx já deve estar funcionando dentro da instância criada e pode ser acessado através do navegador com o IP público.
 
 ![image](https://github.com/user-attachments/assets/e9f68f78-bba7-4376-8943-7269f509e1df)
 
@@ -73,7 +73,7 @@ A partir daqui o Nginx já deve estar funcionando dentro da instância criar e p
 ### **2.3 Configurar Diretório do Site**
 
 Para este projeto foi utilizado uma página modelo de um suposto restaurante. Os arquivos estão no repositório.
-Para implementar uma página customizada no Nginx, segui os passos a seguir:
+Para implementar uma página customizada no Nginx, implemente os passos a seguir:
  
 1. Crie o diretório para o site:  
    ```bash
@@ -117,7 +117,7 @@ A partir daqui você já deve ver o seu site customizado no Nginx:
 
 ## **Etapa 3: Script de Monitoramento com Telegram**
 
-Para que recebamos os alertas de status da aplicação Telegram é necessário criar um bot dentro da ferramenta e acessar sua API gratutia.
+Para que recebamos os alertas de status da aplicação no Telegram é necessário criar um bot dentro da ferramenta e acessar sua API gratutia.
 Veja as passos:
 
 ### **3.1 Criar um Bot no Telegram**
@@ -170,9 +170,7 @@ Agora, precisamos criar o script de monitoramento dentro da aplicação. Segue:
    sudo chmod +x monitor_site.sh
    ```
 
-**Este script avisará ao usuário, por meio do Telegram, o status da aplicação**
-
-Para agendar o recebimento dos alertas, precisamos configurar os Crontab:
+Para agendar o recebimento dos alertas, precisamos configurar o Cron:
 
 ### **3.3 Agendar Execução com Cron**
 1. Abra o Crontab:  
@@ -235,5 +233,3 @@ Acesse `http://IP_PUBLICO_DA_EC2` no navegador para verificar se o site está fu
 **Licença**: MIT.  
 **Repositório**: [[Link para o repositório no GitHub](https://github.com/seu-usuario/projeto-aws](https://github.com/ThiagoResende88/Configurando-Servidor-Web-com-Monitoramento-AWS/).  
 ```
-
-Este README está pronto para ser commitado no seu repositório! 😊
