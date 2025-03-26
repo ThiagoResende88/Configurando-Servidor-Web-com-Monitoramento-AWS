@@ -1,0 +1,28 @@
+#!/bin/bash
+URL="http://localhost"
+LOG="/var/log/monitoramento.log"
+TOKEN="SEU_TOKEN_DO_BOT"
+CHAT_ID="SEU_CHAT_ID"
+
+STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+
+if [ $STATUS -ne 200 ]; then
+    echo "$TIMESTAMP - ERRO: Site fora do ar (Status: $STATUS)" >> $LOG
+    MENSAGEM="⚠️ *ALERTA*: O site está indisponível!  
+    - Status: $STATUS  
+    - Data: $TIMESTAMP"
+    curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+        -d chat_id="$CHAT_ID" \
+        -d text="$MENSAGEM" \
+        -d parse_mode="Markdown" >> /dev/null
+else
+    echo "$TIMESTAMP - OK: Site disponível" >> $LOG
+    MENSAGEM="✅ *STATUS OK*: O site está funcionando normalmente!  
+    - Status: $STATUS  
+    - Data: $TIMESTAMP"
+    curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+        -d chat_id="$CHAT_ID" \
+        -d text="$MENSAGEM" \
+        -d parse_mode="Markdown" >> /dev/null
+fi
