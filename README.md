@@ -237,17 +237,26 @@ mkdir -p /var/www/html/restaurante
 chmod 775 /var/www/html/
 chown -R www-data:www-data /var/www/html/restaurante
 
-# --- Baixar arquivos HTML de um repositório Git ---
-apt-get install git -y
-git clone https://github.com/ThiagoResende88/Configurando-Servidor-Web-com-Monitoramento-AWS/tree/main/restaurante /var/www/html/restaurante
+# Criar arquivos HTML inline (exemplo mínimo) ---
+cat <<EOF > /var/www/html/restaurante/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site Automatizado</title>
+</head>
+<body>
+    <h1>Site funcionando via User Data!</h1>
+</body>
+</html>
+EOF
 
 # Configura o script de monitoramento
 cat <<EOF > /home/ubuntu/monitor_site.sh
 #!/bin/bash
-TOKEN="seu_token"
-CHAT_ID="ID_bot"
 URL="http://localhost"
 LOG="/var/log/monitoramento.log"
+TOKEN="8012066644:AAGRtXCFnV-Jey6waruwACG46gli8xlGrNs"
+CHAT_ID="-4694350089"
 
 STATUS=\$(curl -s -o /dev/null -w "%{http_code}" \$URL)
 TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S")
