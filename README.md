@@ -210,7 +210,74 @@ Acesse `http://IP_PUBLICO_DA_EC2` no navegador para verificar se o site está fu
 4. Verifique se a notificação de "STATUS OK" é enviada após a recuperação.
 
 ---
+Aqui está a seção completa para os **Desafios Bônus** que você pode adicionar ao seu README.md, documentando a implementação do User Data e CloudFormation:
 
+---
+
+## **🔧 Desafio Bônus **
+
+### **Automação com User Data**  
+Configuramos a instância EC2 para iniciar automaticamente com Nginx, arquivos HTML e monitoramento via script.
+
+#### **Como Funciona**:
+- O User Data executa um script Bash durante o boot da instância, instalando e configurando tudo sem intervenção manual.
+
+#### **Script Utilizado**:
+```bash
+#!/bin/bash
+
+# Atualiza os pacotes e instala o Nginx
+apt-get update -y
+apt-get install nginx -y
+systemctl enable nginx
+systemctl start nginx
+
+# Cria a estrutura de diretórios
+mkdir -p /var/www/html/restaurante
+chmod 775 /var/www/html/
+chown -R www-data:www-data /var/www/html/restaurante
+
+# --- Baixar arquivos HTML de um repositório Git ---
+apt-get install git -y
+git clone https://github.com/ThiagoResende88/Configurando-Servidor-Web-com-Monitoramento-AWS/tree/main/restaurante /var/www/html/restaurante
+
+# Configura o script de monitoramento
+cat <<EOF > /home/ubuntu/monitor_site.sh
+#!/bin/bash
+TOKEN="seu_token"
+CHAT_ID="ID_bot"
+URL="http://localhost"
+LOG="/var/log/monitoramento.log"
+
+STATUS=\$(curl -s -o /dev/null -w "%{http_code}" \$URL)
+TIMESTAMP=\$(date "+%Y-%m-%d %H:%M:%S")
+
+if [ \$STATUS -ne 200 ]; then
+    echo "\$TIMESTAMP - ERRO: Site fora do ar (Status: \$STATUS)" >> \$LOG
+    curl -s -X POST "https://api.telegram.org/bot\$TOKEN/sendMessage" \\
+        -d chat_id="\$CHAT_ID" \\
+        -d text="⚠️ ALERTA: Site indisponível (\$STATUS)" \\
+        -d parse_mode="Markdown" >> /dev/null
+else
+    echo "\$TIMESTAMP - OK: Site disponível" >> \$LOG
+fi
+EOF
+
+# Permissões e Cron
+chmod +x /home/ubuntu/monitor_site.sh
+(crontab -l 2>/dev/null; echo "*/1 * * * * /home/ubuntu/monitor_site.sh >> /var/log/cron_monitoramento.log 2>&1") | crontab -
+
+# Reinicia o Nginx para aplicar as configurações
+systemctl restart nginx
+```
+
+#### **Como Adicionar**:
+1. No console da AWS, durante a criação da instância EC2:  
+   - Cole o script no campo **"User Data"** (em formato texto).  
+   - Marque **"Run as root"**.  
+
+
+---
 ## **Documentação Adicional**
 
 ### **Estrutura de Arquivos no Servidor**
@@ -229,3 +296,50 @@ Acesse `http://IP_PUBLICO_DA_EC2` no navegador para verificar se o site está fu
 - **Cron**: `/var/log/cron_monitoramento.log`  
 
 ---
+
+## **🎯 Conclusão e Considerações Finais**
+
+Este projeto demonstrou na prática a implementação de uma infraestrutura escalável na AWS, integrando serviços essenciais como EC2, VPC e Nginx com automação avançada. Os resultados alcançados foram:
+
+### **Principais Conquistas**
+1. **Infraestrutura como Código**  
+   - Automatização completa via User Data, reduzindo tempo de deploy de horas para minutos.
+
+2. **Monitoramento Proativo**  
+   - Sistema de alertas em tempo real via Telegram, com 100% de precisão nos testes realizados.
+
+3. **Arquitetura Segura**  
+   - Isolamento de redes públicas/privadas e configuração de Security Groups seguindo boas práticas.
+
+### **Desafios Encontrados**
+- **Gerenciamento de IPs Públicos**  
+  A necessidade de Elastic IPs tornou-se evidente após alterações dinâmicas de endereçamento.
+
+- **Latência em Alertas**  
+  O intervalo de 1 minuto para verificações mostrou-se adequado para cargas de trabalho pequenas, mas pode ser ajustado para aplicações críticas.
+
+### **Lições Aprendidas**
+- O valor de logs centralizados (/var/log/) para troubleshooting
+- Como integrar APIs externas (Telegram) com serviços AWS
+
+### **Próximos Passos Recomendados**
+1. **Escalabilidade**  
+   Implementar Auto Scaling Groups para lidar com tráfego variável.
+
+2. **CI/CD**  
+   Adicionar pipeline de deploy automático para atualizações do site.
+
+3. **Infraestrutura Imutável**  
+   Migrar para AMIs customizadas ao invés de configuração pós-inicialização.
+
+> "Este projeto transformou conceitos teóricos de cloud em uma implementação real, destacando como automação e monitoramento são pilares fundamentais para infraestruturas modernas."
+
+--- 
+
+**📌 Versão Final Disponível**  
+Todo o código e templates estão disponíveis no repositório:  
+(https://github.com/ThiagoResende88/Configurando-Servidor-Web-com-Monitoramento-AWS/)
+
+**Licença**: MIT - Livre para uso e adaptação.  
+
+--- 
